@@ -17,9 +17,18 @@ public class ServletQuestEngine extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger(ServletQuestEngine.class);
     private static final SQLiteHandler sqLiteHandler = SQLiteHandler.getInstance();
 
+//    @Override
+//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        LOGGER.info("ServletQuestEngine do Post!");
+//        String answerID = req.getParameter("answerID");
+//        HttpSession session = req.getSession();
+//        session.setAttribute("currentQuestion", sqLiteHandler.getNextQuestionID(answerID));
+//        getServletContext().getRequestDispatcher("/quest.jsp").forward(req, resp);
+//    }
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        LOGGER.info("ServletQuestEngine do Post!");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        LOGGER.info("ServletQuestEngine do Get!");
         String answerID = req.getParameter("answerID");
         HttpSession session = req.getSession();
         session.setAttribute("currentQuestion", sqLiteHandler.getNextQuestionID(answerID));

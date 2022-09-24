@@ -8,10 +8,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public class SQLiteHandler {
     private static final Logger LOGGER = LogManager.getLogger(SQLiteHandler.class);
-    private static final String CON_STR = "jdbc:sqlite:"
+    private static String CON_STR = "jdbc:sqlite:"
             + Objects.requireNonNull(SQLiteHandler.class.getClassLoader().getResource("WebQuest.db")).getPath();
 
     private static SQLiteHandler instance = null;
@@ -23,25 +24,31 @@ public class SQLiteHandler {
     }
     private Connection connection;
 
-    public void closeConnection(){
+    private SQLiteHandler() {
+        openConnection();
+    }
+    private void openConnection(){
         try {
-            this.connection.close();
-            LOGGER.info("DB connection was closed");
+            DriverManager.registerDriver(new JDBC());
+            this.connection = DriverManager.getConnection(CON_STR);
+            LOGGER.info("DB connection was opened - {}", !connection.isClosed());
         } catch (SQLException e) {
             LOGGER.error(e);
         }
     }
 
-    private SQLiteHandler() {
+    public void closeConnection(){
         try {
-            DriverManager.registerDriver(new JDBC());
-            this.connection = DriverManager.getConnection(CON_STR);
+            this.connection.close();
+            LOGGER.info("DB connection was closed - {}", connection.isClosed());
         } catch (SQLException e) {
             LOGGER.error(e);
         }
     }
 
     public Question getQuestion(String questionID){
+        if (questionID == null || questionID.isEmpty() || questionID.isBlank() || questionID.length() != 36)
+            return null;
         try (PreparedStatement statement = this.connection.prepareStatement(
                 "SELECT id, text, isStart, isFinish FROM questions WHERE id = ?")) {
             statement.setObject(1, questionID);
@@ -59,12 +66,14 @@ public class SQLiteHandler {
 
             return question;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
             return null;
         }
     }
 
     public ArrayList<Answer> getAnswers(String questionID){
+        if (questionID == null || questionID.isEmpty() || questionID.isBlank() || questionID.length() != 36)
+            return null;
         try (PreparedStatement statement = this.connection.prepareStatement(
                 "SELECT id, question_id, text, next_question_id FROM answers WHERE question_id = ?")) {
             statement.setObject(1, questionID);
@@ -81,7 +90,7 @@ public class SQLiteHandler {
             }
             return list;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
             return null;
         }
     }
@@ -93,12 +102,14 @@ public class SQLiteHandler {
 
             return resultSet.getString("id");
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
             return "";
         }
     }
 
     public String getNextQuestionID(String answerID) {
+        if (answerID == null || answerID.isEmpty() || answerID.isBlank() || answerID.length() != 36)
+            return null;
         try (PreparedStatement statement = this.connection.prepareStatement(
                 "SELECT next_question_id FROM answers WHERE id = ?")) {
             statement.setObject(1, answerID);
@@ -107,7 +118,7 @@ public class SQLiteHandler {
 
             return resultSet.getString("next_question_id");
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
             return null;
         }
     }

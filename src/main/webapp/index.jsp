@@ -10,13 +10,13 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <title>Quest DenVilmont</title>
 </head>
-<body>
+<body class="bg-danger bg-gradient">
 <div class="container">
     <div class="row justify-content-end">
         <div class="row">
             <div class="col-3"></div>
             <div class="col-6">
-                <div class="shadow p-4 mb-5 rounded">
+                <div class="shadow p-4 mt-5 mb-5 rounded bg-secondary bg-gradient">
                     <h2>Цитадель Мёртвых</h2>
                     <br>
                     <p>
@@ -31,25 +31,14 @@
                 <form action="enter" method="post">
                     <div class="form-group">
                         <label for="inputLogin">Login</label>
-                        <input type="text" name="Login" class="form-control" id="inputLogin" placeholder="Enter login">
+                        <input type="text" name="Login" class="form-control" id="inputLogin" placeholder="Enter your login">
                     </div>
                     <br>
                     <button type="submit" class="btn btn-success">Начинаем</button>
                 </form>
                 <br>
             </div>
-
-            <div class="col-3">
-                <div class="shadow p-4 mb-5 rounded">
-                    <p>Information</p>
-                    <form action="renovar" method="get">
-                        <br>
-                        <button type="submit" class="btn btn-success">Начать заново</button>
-                        <br>
-
-                    </form>
-                </div>
-            </div>
+            <jsp:include page="information.jsp" />
         </div>
     </div>
 </div>
